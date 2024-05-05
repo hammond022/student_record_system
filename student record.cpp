@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
+#include <string.h>
 
 
 struct Student{
@@ -31,10 +32,22 @@ struct Student{
 		char guardian_Number[12];
 	}per;
 	
+	struct Enrollment{
+		char strand;  // 1.STEM 2.HUMSS 3.ABM 4.GAS
+		char yearlvl; // 1 = 11, 2=12
+		char semester; // A = first sem, B = second sem.
+		char section; // 1 , 2
+	}enr;
+	
 	
 };
 
 struct Student stu;
+
+void clear_Screen(){
+	system("cls");
+	return;
+}
 
 void menu_Registration(){
 	char gender;
@@ -83,6 +96,86 @@ void menu_Registration(){
 			printf("\nPress any key to go back to main menu.");getch();return;
 		}
 	}
+	fclose(fpointer);
+	fflush(fpointer);
+}
+
+
+void menu_Enrollment(){
+	clear_Screen();
+	char search_Student_Id[12];
+	int bolis_Found = 0;
+	char choice = 0;
+	
+	printf("Enter the ID of Student: ");gets(search_Student_Id);
+	
+	FILE *fpointer;
+	fpointer = fopen("record.txt", "rb");
+	while(fread(&stu, sizeof(stu), 1, fpointer) == 1){
+		if(strcmp(search_Student_Id, stu.per.id) == 0){
+			bolis_Found = 1;
+			break;
+		}
+	}
+	
+	if(bolis_Found == 1){
+		printf("\nStudent is found!");
+		printf("\nStudent Name: %s, %s %s", stu.per.last_Name, stu.per.first_Name, stu.per.middle_Name);
+		printf("\nAddress: %s", stu.per.address);
+		printf("\nBirthdate: %s", stu.per.birthdate);
+		printf("\nAge: %i", stu.per.age);
+		getch();
+		
+		printf("\nEnter strand: [1 = STEM / 2 = HUMSS / 3 = ABM / 4 = GAS]: ");stu.enr.strand= getche();
+		printf("\nEnter year level: ");stu.enr.yearlvl = getche();
+		printf("\nEnter semester: ");stu.enr.semester = getche();
+		printf("\nEnter Section: ");stu.enr.section = getche();
+		printf("\nDo you want to enroll now? [y/n]");choice = getch();
+		if(choice == 'y'){
+			fseek(fpointer, -sizeof(stu), SEEK_CUR);
+			fwrite(&stu, sizeof(stu), 1, fpointer);
+		
+		}
+	}else{
+		printf("No records found!");
+		getch();
+	}
+	
+	fclose(fpointer);
+	return;
+}
+
+void debug_menu_Search(){
+	clear_Screen();
+	char student_Id[12];
+	int bolis_Found = 0;
+	printf("Enter the ID of student: ");
+	gets(student_Id);
+	
+	FILE *fpointer;
+	fpointer = fopen("record.txt", "rb");
+	while(fread(&stu,sizeof(stu),1,fpointer) == 1){
+		if(strcmp(student_Id, stu.per.id) == 0 ){
+			bolis_Found = 1;
+			break;
+		}
+	}
+	
+	if(bolis_Found == 1){
+		printf("The student is found!");
+		printf("ID: %s", stu.per.id);
+		printf("Name; %s", stu.per.first_Name);
+			getch();
+	}else{
+		printf("No records found!");
+		getch();
+	}
+	
+
+	
+	
+	fclose(fpointer);
+	return;
 }
 
 
@@ -103,7 +196,14 @@ int main(){
 		case 'A':
 			menu_Registration();
 			break;
-		
+		case 'b':
+		case 'B':
+			menu_Enrollment();
+			break;
+		case 'x': //debug
+		case 'X':
+			debug_menu_Search();
+			break;
 		default: 
 			printf("Invalid option");
 			break;
