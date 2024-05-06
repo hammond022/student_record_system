@@ -32,6 +32,14 @@ struct Student{
 		char guardian_Number[12];
 	}per;
 	
+	struct Documents{
+		char has_BirthCertificate;
+		char has_MarriageContract;
+		char has_Diploma;
+		char has_Form137;
+		char has_ReportCard;
+	};
+	
 	struct Enrollment{
 		char strand;  // 1.STEM 2.HUMSS 3.ABM 4.GAS
 		char yearlvl; // 1 = 11, 2=12
@@ -39,7 +47,9 @@ struct Student{
 		char section; // 1 , 2
 	}enr;
 	
-	
+	struct Payment{
+		int 
+	};
 };
 
 struct Student stu;
@@ -49,6 +59,8 @@ void clear_Screen(){
 	return;
 }
 
+
+// no error checking come back to this
 void menu_Registration(){
 	char gender;
 	char menu_Choice;
@@ -100,7 +112,7 @@ void menu_Registration(){
 	fflush(fpointer);
 }
 
-
+// no error checking come back to this
 void menu_Enrollment(){
 	clear_Screen();
 	char search_Student_Id[12];
@@ -110,7 +122,7 @@ void menu_Enrollment(){
 	printf("Enter the ID of Student: ");gets(search_Student_Id);
 	
 	FILE *fpointer;
-	fpointer = fopen("record.txt", "rb");
+	fpointer = fopen("record.txt", "rb+");
 	while(fread(&stu, sizeof(stu), 1, fpointer) == 1){
 		if(strcmp(search_Student_Id, stu.per.id) == 0){
 			bolis_Found = 1;
@@ -142,7 +154,13 @@ void menu_Enrollment(){
 	}
 	
 	fclose(fpointer);
+	fflush(fpointer);
 	return;
+}
+
+void menu_Payment(){
+	clear_Screen();
+	
 }
 
 void debug_menu_Search(){
@@ -162,9 +180,13 @@ void debug_menu_Search(){
 	}
 	
 	if(bolis_Found == 1){
-		printf("The student is found!");
-		printf("ID: %s", stu.per.id);
-		printf("Name; %s", stu.per.first_Name);
+		printf("\nThe student is found!");
+		printf("\nID: %s", stu.per.id);
+		printf("\nName; %s", stu.per.first_Name);
+		printf("\nSTRAND: %c", stu.enr.strand);
+		printf("\nSEMESTER: %c", stu.enr.semester);
+		printf("\nYEAR: %c", stu.enr.yearlvl);
+		printf("\nSECTION: %c", stu.enr.section);
 			getch();
 	}else{
 		printf("No records found!");
